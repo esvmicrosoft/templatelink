@@ -123,7 +123,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
-      "name": "vnetTemplate",
+      "name": "vnetResource",
       "dependsOn": [
 	       "[resourceId('Microsoft.Resources/deployments', 'nsgResource')]"
       ],
@@ -150,7 +150,7 @@
       "apiVersion": "2020-10-01",
       "name": "vmResource",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'vnetTemplate')]"
+        "[resourceId('Microsoft.Resources/deployments', 'vnetResource')]"
      ],
       "properties": {
         "mode": "Incremental",
@@ -189,10 +189,10 @@
             "value": "Standard_D2s_v4"
           },
           "vnetid": {
-            "value": "[reference('vnetTemplate').outputs.vnetid.value]"
+            "value": "[reference('vnetResource').outputs.vnetid.value]"
           },
           "stgId": {
-            "value": "[reference('vnetTemplate').outputs.stgid.value]"
+            "value": "[reference('storageResource').outputs.stgid.value]"
           }
         }
       }
