@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "type": "string",
+        "defaultValue": "eastus",
+        "metadata":{
+          "description": "Specify the location for the resources."
+        }
+      },
+      "nsgName": {
+        "type": "string",
+        "metadata":{
+          "description": "NSG Name to be used."
+        }
+      }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+          "type": "Microsoft.Network/networkSecurityGroups",
+          "apiVersion": "2017-06-01",
+          "tags": {},
+	        "properties": {},
+          "name": "[parameters('nsgName')]",
+          "location": "[parameters('location')]"
+        }
+   ],
+   "outputs": {
+      "nsgId": {
+         "type": "string",
+         "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+      }
+   }
+}

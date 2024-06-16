@@ -1,0 +1,249 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "numberOfInstances": {
+        "type": "int",
+        "defaultValue": 1,
+        "minValue": 1,
+        "maxValue": 3,
+        "metadata": {
+            "description": "Number of VMs to deploy, limit 398 since there is an 800 resource limit for a single template deployment"
+        }
+    },
+    "publisher": {
+        "type": "string",
+        "defaultValue": "SuSE",
+        "metadata": {
+            "description": "Image Publisher."
+        }
+    },
+    "offer": {
+        "type": "string",
+        "defaultValue": "sles-sap-15-sp3",
+        "metadata": {
+            "description": "Image offer."
+        }
+    },
+    "sku"      : {
+        "type": "string",
+        "defaultValue": "gen2",
+        "metadata": {
+            "description": "Image sku."
+        }
+    },
+    "version"  : {
+        "type": "string",
+        "defaultValue": "latest",
+        "metadata": {
+            "description": "Image Version."
+        }
+    },
+    "location": {
+        "type": "string",
+        "defaultValue": "eastus",
+        "metadata": {
+            "description": "Location for all resources."
+        }
+    },
+    "authenticationType": {
+        "type": "string",
+        "defaultValue": "sshPublicKey",
+        "allowedValues": [
+            "sshPublicKey",
+            "password"
+        ],
+        "metadata": {
+            "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+        }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+          "description": "Admin username for VM"
+      }
+    },
+    "adminPasswordOrKey": {
+      "type": "string"
+    },
+    "vmSize": {
+        "type": "string",
+        "defaultValue": "Standard_D2s_v3",
+        "metadata": {
+            "description": "description"
+        }
+    }
+  },
+  "variables": {
+      "storageName": "[concat('esv', uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "storageResource",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/storage_template.json"
+        },
+        "parameters": {
+          "location": {
+            "value": "[resourceGroup().location]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageName')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "nsgResource",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/nsg.json"
+        },
+        "parameters": {
+          "location": {
+            "value": "[resourceGroup().location]"
+          },
+          "nsgName": {
+            "value": "[concat(resourceGroup().name,'-vnet-NSG-CASG')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "sbdDisk",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/shareddisk.json"
+        },
+        "parameters": {
+           "location": {
+              "value": "[resourceGroup().location]"
+           },
+           "dataDiskName": {
+              "value": "shareddisk"
+           },
+           "dataDiskSizeGB": {
+              "value": 4
+           },
+           "maxShares": {
+              "value": 2
+           }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "vnetTemplate",
+      "dependsOn": [
+	       "[resourceId('Microsoft.Resources/deployments', 'nsgResource')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/vnet.json"
+        },
+        "parameters": {
+          "vnetname": {
+            "value": "[concat(resourceGroup().name,'-vnet')]"
+          },
+          "location": {
+            "value": "[resourceGroup().location]"
+          },
+	        "nsgId": {
+            "value": "[reference('nsgResource').outputs.nsgId.value]"
+	        }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "avsetResource",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/availabilityset.json"
+        },
+        "parameters": {
+          "location": {
+            "value": "[resourceGroup().location]"
+          },
+          "availabilitySetName": {
+            "value": "[concat(resourceGroup().name,'-avset')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "vmResource",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'vnetTemplate')]",
+        "[resourceId('Microsoft.Resources/deployments', 'sbdDisk')]"
+     ],
+      "properties": {
+        "mode": "Incremental",
+	      "templateLink": {
+           "uri": "https://raw.githubusercontent.com/esanchezvela/azure-template/main/artifacts/vms.json"
+        },
+        "parameters": {
+          "numberOfInstances": {
+            "value": "[parameters('numberOfInstances')]"
+          },
+          "publisher": {
+            "value": "[parameters('publisher')]"
+          },
+          "offer": {
+            "value": "[parameters('offer')]"
+          }, 
+          "sku": {
+            "value": "[parameters('sku')]"
+          },
+          "version": {
+            "value": "[parameters('version')]"
+          },
+          "location": {
+            "value": "[resourceGroup().location]"
+          },
+          "authenticationType": {
+            "value": "sshPublicKey"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPasswordOrKey": {
+            "value": "[parameters('adminPasswordOrKey')]"
+          },
+          "vmSize": {
+            "value": "Standard_D2s_v4"
+          },
+          "avsetId": {
+            "value": "[reference('avsetResource').outputs.avsetId.value]"
+          },
+          "vnetid": {
+            "value": "[reference('vnetTemplate').outputs.vnetid.value]"
+          },
+          "diskId": {
+            "value": "[reference('sbdDisk').outputs.diskId.value]"
+          },
+          "stgName": {
+            "value": "[variables('storageName')]"
+          }
+        }
+      }
+    }
+  ]
+}
