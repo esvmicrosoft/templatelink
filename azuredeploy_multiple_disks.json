@@ -197,11 +197,14 @@
       "properties": {
         "mode": "Incremental",
 	      "templateLink": {
-           "uri": "https://raw.githubusercontent.com/esvmicrosoft/templatelink/master/artifacts/vms.json"
+           "uri": "https://raw.githubusercontent.com/esvmicrosoft/templatelink/master/artifacts/vm.json"
         },
         "parameters": {
-          "numberOfInstances": {
-            "value": "[parameters('numberOfInstances')]"
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
           },
           "publisher": {
             "value": "[parameters('publisher')]"
@@ -221,23 +224,14 @@
           "authenticationType": {
             "value": "sshPublicKey"
           },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
           "adminPasswordOrKey": {
             "value": "[parameters('adminPasswordOrKey')]"
           },
           "vmSize": {
             "value": "Standard_D2s_v4"
           },
-          "avsetId": {
-            "value": "[reference('avsetResource').outputs.avsetId.value]"
-          },
           "vnetid": {
             "value": "[reference('vnetTemplate').outputs.vnetid.value]"
-          },
-          "diskId": {
-            "value": "[reference('sbdDisk').outputs.diskId.value]"
           },
           "stgName": {
             "value": "[variables('storageName')]"

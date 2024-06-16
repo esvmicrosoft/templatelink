@@ -1,0 +1,197 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+          "type": "string",
+          "defaultValue": "lab01",
+          "metadata": {
+            "description": "Name for the Virtual Machine."
+          }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username for VM"
+            }
+        },
+        "publisher": {
+            "type": "string",
+            "metadata": {
+                "description": "Image Publisher."
+            }
+        },
+        "offer": {
+            "type": "string",
+            "metadata": {
+                "description": "Image offer."
+            }
+        },
+        "sku"      : {
+            "type": "string",
+            "metadata": {
+                "description": "Image sku."
+            }
+        },
+        "version"  : {
+            "type": "string",
+            "defaultValue": "latest",
+            "metadata": {
+                "description": "Image Version."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "authenticationType": {
+            "type": "string",
+            "defaultValue": "sshPublicKey",
+            "allowedValues": [
+                "sshPublicKey",
+                "password"
+            ],
+            "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+            }
+        },
+        "adminPasswordOrKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2s_v3",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "vnetid": {
+            "type": "string",
+            "metadata": {
+                "description": "VNETID of managing VM"
+            }
+        },
+        "stgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage name boot diagnostics"
+            }
+        }
+    },
+    "variables": {
+        "nicNameVM": "[concat(uniquestring(parameters('vmName')), 'nic')]",
+        "linuxConfiguration": {
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                        "keyData": "[parameters('adminPasswordOrKey')]"
+            	    }                    
+                ]
+            }
+        },
+        "subnet1Ref": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
+    },
+    "resources": [
+        {
+          "apiVersion": "2020-05-01",
+          "type": "Microsoft.Network/networkInterfaces",
+          "name": "[variables('nicNameVM')]",
+          "location": "[parameters('location')]",
+          "properties": {
+            "ipConfigurations": [
+              {
+                "name": "ipconfig1",
+                "properties": {
+                  "privateIPAllocationMethod": "Dynamic",
+                  "subnet": "[parameters('subnet1Ref')]"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "2020-06-01",
+          "type": "Microsoft.Compute/virtualMachines",
+          "name": "[parameters('vmName')]",
+          "location": "[parameters('location')]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "tags": {
+            "Tag1": "ManagedVM"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicNameVM'))]"
+          ],
+          "properties": {
+            "hardwareProfile": {
+              "vmSize": "[parameters('vmSize')]"
+            },
+            "osProfile": {
+              "adminPassword": "[parameters('adminPasswordOrKey')]",
+              "adminUsername": "[parameters('adminUsername')]",
+              "computerName": "[parameters('vmName')]",
+              "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+            },
+            "diagnosticsProfile": {
+              "bootDiagnostics": {
+                "enabled": true,
+                "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccounts_aztrial_name'))).primaryEndpoints.blob]"
+              }
+            },
+            "storageProfile": {
+              "imageReference": {
+                "publisher": "[parameters('imagePublisher')]",
+                "offer":     "[parameters('imageOffer')]",
+                "sku":       "[parameters('imageSku')]",
+                "version":   "[parameters('imageVersion')]"
+              }
+            },
+            "networkProfile": {
+              "networkInterfaces": [
+                {
+                  "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicNameVM'))]"
+                }
+              ]
+            }
+          },
+          "resources": [
+            {
+              "apiVersion": "2015-06-15",
+              "type": "extensions",
+              "name": "custom-script",
+              "location": "[parameters('location')]",
+              "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+              ],
+              "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": "true",
+                "protectedSettings": {
+                  "commandToExecute": "['rm -f /etc/cron.daily/rh*; exit 0' ]"
+                }
+              }
+            }
+          ]
+        }
+    ],
+    "outputs": {
+      "privateIps": {
+        "type": "array",
+        "copy": {
+            "count": "[parameters('numberOfInstances')]",
+            "input": "[reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress]"
+        }
+        
+      }
+    
+    }
+}
