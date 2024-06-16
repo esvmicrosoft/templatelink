@@ -95,7 +95,7 @@
                 ]
             }
         },
-        "subnet1Ref": "[concat(parameters('vnetid'),'/Subnet1')]"
+        "subnet1Ref": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
     },
     "resources": [
         {
@@ -109,7 +109,7 @@
                 "name": "ipconfig1",
                 "properties": {
                   "privateIPAllocationMethod": "Dynamic",
-                  "subnet": "[parameters('subnet1Ref')]"
+                  "subnet": "[variables('subnet1Ref')]"
                 }
               }
             ]
