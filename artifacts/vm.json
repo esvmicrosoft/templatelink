@@ -95,7 +95,7 @@
                 ]
             }
         },
-        "subnet1Ref": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
+        "subnet1Ref": "[concat(parameters('vnetid'),'/Subnet1')]"
     },
     "resources": [
         {
