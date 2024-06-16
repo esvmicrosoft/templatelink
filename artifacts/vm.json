@@ -185,12 +185,8 @@
     ],
     "outputs": {
       "privateIps": {
-        "type": "array",
-        "copy": {
-            "count": "[parameters('numberOfInstances')]",
-            "input": "[reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress]"
-        }
-        
+        "type": "string",
+        "value": "[reference(variables('nicNameVM')).ipConfigurations[0].properties.privateIPAddress]"
       }
     
     }
