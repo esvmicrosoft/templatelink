@@ -76,6 +76,12 @@
                 "description": "VNETID of managing VM"
             }
         },
+        "subnetid": {
+            "type": "string",
+            "metadata": {
+                "description": "VNETID of managing VM"
+            }
+        },
         "stgId": {
             "type": "string",
             "metadata": {
@@ -95,7 +101,7 @@
                 ]
             }
         },
-        "subnet1Ref": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
+        "subnetRef": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
     },
     "resources": [
         {
@@ -114,7 +120,7 @@
                 "properties": {
                   "privateIPAllocationMethod": "Dynamic",
                   "subnet": {
-                    "id": "[variables('subnet1Ref')]"
+                    "id": "[parameters('subnetid')]"
                   }
                 }
               }

@@ -74,8 +74,8 @@
             "name": "[parameters('subnet1Name')]",
             "properties": {
               "addressPrefix": "[parameters('subnet1Prefix')]",
-	      "networkSecurityGroup": {
-		     "id":  "[parameters('nsgId')]"
+	            "networkSecurityGroup": {
+		            "id":  "[parameters('nsgId')]"
               }
             }
           },
@@ -96,6 +96,10 @@
     "vnetid": {
       "type": "string",
       "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-   }    
+    },
+    "subnet1": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), 'Subnet1')]"
+    }
   }
 }

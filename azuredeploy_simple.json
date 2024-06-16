@@ -191,6 +191,9 @@
           "vnetid": {
             "value": "[reference('vnetResource').outputs.vnetid.value]"
           },
+          "subnetid": {
+            "value": "[reference('vnetResource').outputs.subnet1.value]"
+          },
           "stgId": {
             "value": "[reference('storageResource').outputs.stgid.value]"
           }
