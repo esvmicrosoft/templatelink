@@ -76,10 +76,10 @@
                 "description": "VNETID of managing VM"
             }
         },
-        "stgName": {
+        "stgId": {
             "type": "string",
             "metadata": {
-                "description": "Storage name boot diagnostics"
+                "description": "Storage Id of boot diagnostics"
             }
         }
     },
@@ -142,7 +142,7 @@
             "diagnosticsProfile": {
               "bootDiagnostics": {
                 "enabled": true,
-                "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('stgName'))).primaryEndpoints.blob]"
+                "storageUri": "[concat(parameters('stgId'),'primaryEndpoints.blob')]"
               }
             },
             "storageProfile": {

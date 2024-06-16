@@ -191,8 +191,8 @@
           "vnetid": {
             "value": "[reference('vnetTemplate').outputs.vnetid.value]"
           },
-          "stgName": {
-            "value": "[variables('storageName')]"
+          "stgId": {
+            "value": "[reference('vnetTemplate').outputs.stgid.value]"
           }
         }
       }

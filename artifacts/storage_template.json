@@ -34,5 +34,12 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "stgid": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+
+    }
+  }
 }
