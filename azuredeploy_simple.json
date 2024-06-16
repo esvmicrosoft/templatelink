@@ -1,4 +1,4 @@
-
+{
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.1",
   "parameters": {
@@ -73,6 +73,9 @@
         "metadata": {
             "description": "description"
         }
+    },
+    "vmName": {
+        "type": "string"
     }
   },
   "variables": {
@@ -127,7 +130,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-           "uri": "https://raw.githubusercontent.com/esvmicrosoft/templatelink/master/artifacts/net.json"
+           "uri": "https://raw.githubusercontent.com/esvmicrosoft/templatelink/master/artifacts/vnet.json"
         },
         "parameters": {
           "vnetname": {
