@@ -101,7 +101,7 @@
         {
           "apiVersion": "2020-05-01",
           "type": "Microsoft.Network/networkInterfaces",
-          "name": "[variables('nicNameVM1')]",
+          "name": "[variables('nicNameVM')]",
           "location": "[parameters('location')]",
           "dependsOn": [
             "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameVM1'))]",
