@@ -200,8 +200,8 @@
           "subnetName": {
             "value": "Subnet1"
           },
-          "stgId": {
-            "value": "[reference('storageResource').outputs.stgid.value]"
+          "storageAccountName": {
+            "value": "[variables('storageName')]"
           }
         }
       }
