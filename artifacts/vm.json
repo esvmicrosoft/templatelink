@@ -120,9 +120,6 @@
           "type": "Microsoft.Network/networkInterfaces",
           "name": "[variables('nicNameVM')]",
           "location": "[parameters('location')]",
-          "dependsOn": [
-            "[parameters('vnetid')]"
-          ],
           "properties": {
             "ipConfigurations": [
               {
