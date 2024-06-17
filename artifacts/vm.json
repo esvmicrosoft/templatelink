@@ -94,7 +94,7 @@
                 "description": "subnetName  of managed VM"
             }
         },
-        "storageAccountName": {
+        "stgid": {
             "type": "string",
             "metadata": {
                 "description": "Storage Id of boot diagnostics"
@@ -161,7 +161,7 @@
             "diagnosticsProfile": {
               "bootDiagnostics": {
                 "enabled": true,
-                "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))).primaryEndpoints.blob]"
+                "storageUri": "[concat(parameters('stgid'),'.primaryEndpoints.blob)']"
               }
             },
             "storageProfile": {
