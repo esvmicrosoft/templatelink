@@ -161,7 +161,7 @@
             "diagnosticsProfile": {
               "bootDiagnostics": {
                 "enabled": true,
-                "storageUri": "[reference(parameters('stgid','2021-04-01')).primaryEndpoints.blob]"
+                "storageUri": "[reference(parameters('stgid'),'2021-04-01').primaryEndpoints.blob]"
               }
             },
             "storageProfile": {
