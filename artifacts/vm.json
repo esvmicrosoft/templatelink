@@ -123,7 +123,7 @@
           "name": "[variables('nicNameVM')]",
           "location": "[parameters('location')]",
           "dependsOn": [
-            "[variables('vnetRef')]"
+            "[parameters('vnetid')]"
           ],
           "properties": {
             "ipConfigurations": [
@@ -132,7 +132,7 @@
                 "properties": {
                   "privateIPAllocationMethod": "Dynamic",
                   "subnet": {
-                    "id": "[variables('subnetRef')]"
+                    "id": "[parameters('subnetid')]"
                   }
                 }
               }
