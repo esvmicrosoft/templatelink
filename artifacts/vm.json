@@ -112,9 +112,7 @@
             	    }                    
                 ]
             }
-        },
-        "vnetRef": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'Subnet1')]"
+        }
     },
     "resources": [
         {
