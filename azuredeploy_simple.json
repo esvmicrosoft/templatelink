@@ -201,7 +201,7 @@
             "value": "Subnet1"
           },
           "stgid": {
-            "value": "[reference('storageResource).outputs.stgid.value]"
+            "value": "[reference('storageResource').outputs.stgid.value]"
           }
         }
       }
