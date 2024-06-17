@@ -188,17 +188,8 @@
           "vmSize": {
             "value": "Standard_D2s_v4"
           },
-          "vnetid": {
-            "value": "[reference('vnetResource').outputs.vnetid.value]"
-          },
-          "vnetName": {
-            "value": "[concat(resourceGroup().name,'-vnet')]"
-          },
           "subnetid": {
             "value": "[reference('vnetResource').outputs.subnet1.value]"
-          },
-          "subnetName": {
-            "value": "Subnet1"
           },
           "stgid": {
             "value": "[reference('storageResource').outputs.stgid.value]"
