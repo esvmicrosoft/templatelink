@@ -191,8 +191,14 @@
           "vnetid": {
             "value": "[reference('vnetResource').outputs.vnetid.value]"
           },
+          "vnetName": {
+            "value": "[concat(resourceGroup().name,'-vnet')]"
+          },
           "subnetid": {
             "value": "[reference('vnetResource').outputs.subnet1.value]"
+          },
+          "subnetName": {
+            "value": "Subnet1"
           },
           "stgId": {
             "value": "[reference('storageResource').outputs.stgid.value]"

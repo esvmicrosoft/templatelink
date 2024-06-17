@@ -76,10 +76,22 @@
                 "description": "vnetID of managed VM"
             }
         },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "vnetName of managed VM"
+            }
+        },
         "subnetid": {
             "type": "string",
             "metadata": {
                 "description": "subnetID  of managed VM"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "subnetName  of managed VM"
             }
         },
         "stgId": {
@@ -101,7 +113,8 @@
                 ]
             }
         },
-        "subnetRef": "[concat(parameters('vnetid'),'/subnets/Subnet1')]"
+        "vnetRef": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'Subnet1')]"
     },
     "resources": [
         {
@@ -110,7 +123,7 @@
           "name": "[variables('nicNameVM')]",
           "location": "[parameters('location')]",
           "dependsOn": [
-            "[parameters('vnetid')]"
+            "[variables('vnetRef')]"
           ],
           "properties": {
             "ipConfigurations": [
@@ -119,7 +132,7 @@
                 "properties": {
                   "privateIPAllocationMethod": "Dynamic",
                   "subnet": {
-                    "id": "[parameters('subnetid')]"
+                    "id": "[variables('subnetRef')]"
                   }
                 }
               }
